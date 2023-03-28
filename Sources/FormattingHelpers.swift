@@ -1062,17 +1062,6 @@ extension Formatter {
             }
         }
 
-        func isStringInterpolation(at insertIndex: Int) -> Bool {
-            switch token(at: insertIndex) {
-            case .startOfScope("(")?:
-                return token(at: insertIndex - 1)?.isStringBody == true
-            case .stringBody:
-                return token(at: insertIndex + 1) == .startOfScope("(")
-            default:
-                return false
-            }
-        }
-
         func removeKeyword() {
             removeToken(at: i)
             if token(at: i)?.isSpace == true {
@@ -1097,8 +1086,7 @@ extension Formatter {
                 {
                     break loop
                 }
-            case .operator(_, .prefix),
-                 _ where isStringInterpolation(at: i),
+            case .operator(_, .prefix), .stringBody,
                  .startOfScope where tokens[i].isStringDelimiter:
                 break
             default:
